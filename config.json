@@ -1,11 +1,11 @@
 {
     "database": {
-        "driver_path": "path/to/jt400.jar",
+        "driver_path": "/app/lib/jt400.jar",
         "driver_class": "com.ibm.as400.access.AS400JDBCDriver",
-        "connection_url": "jdbc:as400://HOSTNAME;naming=sql;errors=full",
-        "username": "YOUR_USERNAME",
-        "password": "YOUR_PASSWORD",
-        "schema": "YOUR_SCHEMA"
+        "connection_url": "jdbc:as400://161.82.146.249;naming=sql;errors=full",
+        "username": "user001",
+        "password": "pwdN03xpr",
+        "schema": "GSLIBTST"
     },
     "files": {
         "schema_file": "schema_sample.json",

@@ -1,7 +1,7 @@
 {
     "tables": [
         {
-            "table_name": "CUSTOMERS",
+            "table_name": "CUSTOMERZ",
             "columns": [
                 {"name": "CUST_ID", "type": "INTEGER", "primary_key": true},
                 {"name": "FIRST_NAME", "type": "VARCHAR(50)"},

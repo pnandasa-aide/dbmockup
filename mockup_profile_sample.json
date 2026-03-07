@@ -1,7 +1,7 @@
 {
     "profiles": [
         {
-            "table_name": "CUSTOMERS",
+            "table_name": "CUSTOMERZ",
             "total_records": 100,
             "transaction_ratio": "60:30:10",
             "field_mapping": {
