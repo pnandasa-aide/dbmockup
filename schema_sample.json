@@ -1,0 +1,35 @@
+{
+    "tables": [
+        {
+            "table_name": "CUSTOMERS",
+            "columns": [
+                {"name": "CUST_ID", "type": "INTEGER", "primary_key": true},
+                {"name": "FIRST_NAME", "type": "VARCHAR(50)"},
+                {"name": "LAST_NAME", "type": "VARCHAR(50)"},
+                {"name": "EMAIL", "type": "VARCHAR(100)"},
+                {"name": "POSTAL_CODE", "type": "VARCHAR(10)"},
+                {"name": "CREATED_AT", "type": "TIMESTAMP"}
+            ]
+        },
+        {
+            "table_name": "PRODUCTS",
+            "columns": [
+                {"name": "PROD_ID", "type": "INTEGER", "primary_key": true},
+                {"name": "PROD_NAME", "type": "VARCHAR(100)"},
+                {"name": "CATEGORY", "type": "VARCHAR(50)"},
+                {"name": "PRICE", "type": "DECIMAL(10,2)"},
+                {"name": "STOCK_QTY", "type": "INTEGER"}
+            ]
+        },
+        {
+            "table_name": "ORDERS",
+            "columns": [
+                {"name": "ORDER_ID", "type": "INTEGER", "primary_key": true},
+                {"name": "CUST_ID", "type": "INTEGER"},
+                {"name": "ORDER_DATE", "type": "DATE"},
+                {"name": "TOTAL_AMOUNT", "type": "DECIMAL(12,2)"},
+                {"name": "STATUS", "type": "VARCHAR(20)"}
+            ]
+        }
+    ]
+}

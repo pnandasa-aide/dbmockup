@@ -1,0 +1,41 @@
+{
+    "profiles": [
+        {
+            "table_name": "CUSTOMERS",
+            "total_records": 100,
+            "transaction_ratio": "60:30:10",
+            "field_mapping": {
+                "CUST_ID": "increment",
+                "FIRST_NAME": "first_name",
+                "LAST_NAME": "last_name",
+                "EMAIL": "email",
+                "POSTAL_CODE": "postcode",
+                "CREATED_AT": "date_time_this_year"
+            }
+        },
+        {
+            "table_name": "PRODUCTS",
+            "total_records": 50,
+            "transaction_ratio": "80:20:0",
+            "field_mapping": {
+                "PROD_ID": "increment",
+                "PROD_NAME": "word",
+                "CATEGORY": "random_element(['Electronics', 'Books', 'Clothing', 'Home'])",
+                "PRICE": "random_number(digits=2)",
+                "STOCK_QTY": "random_int(min=0, max=1000)"
+            }
+        },
+        {
+            "table_name": "ORDERS",
+            "total_records": 200,
+            "transaction_ratio": "90:10:0",
+            "field_mapping": {
+                "ORDER_ID": "increment",
+                "CUST_ID": "random_int(min=1, max=100)",
+                "ORDER_DATE": "date_this_month",
+                "TOTAL_AMOUNT": "random_number(digits=3)",
+                "STATUS": "random_element(['PENDING', 'SHIPPED', 'DELIVERED', 'CANCELLED'])"
+            }
+        }
+    ]
+}
