@@ -6,3 +6,11 @@ __pycache__/
 env/
 venv/
 *.log
+*.1
+*.2
+*.3
+*.4
+*.5
+*.txt
+config.json
+readme*.txt
