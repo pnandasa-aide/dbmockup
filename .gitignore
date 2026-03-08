@@ -11,6 +11,7 @@ venv/
 *.3
 *.4
 *.5
+*.bak
 *.txt
 config.json
-readme*.txt
+*.tmp
