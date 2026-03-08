@@ -151,7 +151,7 @@ class AS400DB2Interface(DatabaseInterface):
         # Use QSYS2.DISPLAY_JOURNAL to get entries for this specific table
         # This function can be heavy, we fetch oldest and newest entry sequence numbers
         query = f"""
-            SELECT MIN(JOURNAL_SEQUENCE_NUMBER), MAX(JOURNAL_SEQUENCE_NUMBER)
+            SELECT MIN(SEQUENCE_NUMBER), MAX(SEQUENCE_NUMBER)
             FROM TABLE(QSYS2.DISPLAY_JOURNAL('{j_info['journal_library']}', '{j_info['journal_name']}')) AS X
             WHERE OBJECT = ?
         """
