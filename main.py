@@ -50,26 +50,32 @@ def verify_schema(db, table_schema, schema=None):
         else:
             expected_type_base = expected_type
 
-        if expected_type_base not in actual_info['type'].upper():
+        actual_type = actual_info['type'].upper()
+        # Handle TIMESTMP vs TIMESTAMP
+        if expected_type_base == 'TIMESTAMP' and actual_type == 'TIMESTMP':
+            pass
+        elif expected_type_base not in actual_type:
              differences.append(f"Type mismatch for {col_name}: Expected {expected_type}, got {actual_info['type']}")
 
     if differences:
         print(f"Schema mismatch for {table_name}:")
         for diff in differences:
             print(f"  - {diff}")
-        print("Exiting due to schema mismatch.")
-        sys.exit(1)
+        return False, None
     
     print(f"Schema verification passed for {table_name}.")
     pk_col = next((col['name'] for col in table_schema['columns'] if col.get('primary_key')), None)
-    return pk_col
+    return True, pk_col
 
 def process_table(db, gen, table_schema, profile, batch_size, schema=None):
     table_name = table_schema['table_name']
     print(f"\nProcessing table: {table_name}")
 
-    # 1. Verify schema - will exit if mismatch
-    pk_col = verify_schema(db, table_schema, schema=schema)
+    # 1. Verify schema
+    success, pk_col = verify_schema(db, table_schema, schema=schema)
+    if not success:
+        print(f"Table {table_name} schema does not match. Please update your schema and run the script later.")
+        return False
 
     # 2. Journaling info
     j_info = db.get_journal_info(table_name, schema=schema)
