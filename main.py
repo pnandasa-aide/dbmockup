@@ -77,6 +77,10 @@ def process_table(db, gen, table_schema, profile, batch_size, schema=None):
         print(f"Table {table_name} schema does not match. Please update your schema and run the script later.")
         return False
 
+    if pk_col:
+        max_id = db.get_max_id(table_name, pk_col, schema=schema)
+        gen.set_increment(pk_col, max_id)
+
     # 2. Journaling info
     j_info = db.get_journal_info(table_name, schema=schema)
     if j_info:
@@ -84,8 +88,10 @@ def process_table(db, gen, table_schema, profile, batch_size, schema=None):
         # 3. Journal entries info
         je_info = db.get_journal_entries_info(table_name, schema=schema)
         if je_info:
-            print(f"Oldest Sequence: {je_info.get('oldest_sequence')}")
-            print(f"Newest Sequence: {je_info.get('newest_sequence')}")
+            oldest = je_info.get('oldest_sequence')
+            newest = je_info.get('newest_sequence')
+            print(f"Oldest Sequence: {oldest if oldest is not None else 'None (no entries found)'}")
+            print(f"Newest Sequence: {newest if newest is not None else 'None (no entries found)'}")
     else:
         print("Journaling not enabled or not found.")
 
