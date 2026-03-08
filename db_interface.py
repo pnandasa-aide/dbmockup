@@ -16,6 +16,10 @@ class DatabaseInterface(abc.ABC):
         pass
 
     @abc.abstractmethod
+    def schema_exists(self, schema):
+        pass
+
+    @abc.abstractmethod
     def get_journal_info(self, table_name):
         pass
 
@@ -59,6 +63,14 @@ class AS400DB2Interface(DatabaseInterface):
         if self.conn:
             self.conn.close()
             self.logger.info("Connection closed")
+
+    def schema_exists(self, schema):
+        cursor = self.conn.cursor()
+        query = "SELECT 1 FROM QSYS2.SYSSCHEMAS WHERE SCHEMA_NAME = ?"
+        cursor.execute(query, [schema.upper()])
+        row = cursor.fetchone()
+        cursor.close()
+        return row is not None
 
     def get_table_columns(self, table_name):
         cursor = self.conn.cursor()

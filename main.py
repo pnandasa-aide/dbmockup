@@ -16,6 +16,15 @@ def load_json(filepath):
     with open(filepath, 'r') as f:
         return json.load(f)
 
+def get_verified_schema(db, schema):
+    if not schema:
+        return ""
+    if db.schema_exists(schema):
+        return schema.upper()
+    else:
+        print(f"Error: Schema {schema} does not exist.")
+        sys.exit(1)
+
 def verify_schema(db, table_schema):
     table_name = table_schema['table_name']
     expected_columns = {col['name'].upper(): col for col in table_schema['columns']}
@@ -155,6 +164,7 @@ def main():
     
     try:
         db.connect()
+        active_schema = get_verified_schema(db, config['database'].get('schema', ''))
         profiles = {p['table_name']: p for p in mockup_data['profiles']}
         
         for table_schema in schema_data['tables']:

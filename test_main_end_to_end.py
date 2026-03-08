@@ -9,6 +9,7 @@ def test_main_flow():
         mock_db = MockDB.return_value
         # Mock connection
         mock_db.connect.return_value = None
+        mock_db.schema_exists.return_value = True
         
         # Mock get_table_columns for CUSTOMERZ
         def mock_get_columns(table):
