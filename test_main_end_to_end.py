@@ -10,9 +10,9 @@ def test_main_flow():
         # Mock connection
         mock_db.connect.return_value = None
         
-        # Mock get_table_columns for CUSTOMERS
+        # Mock get_table_columns for CUSTOMERZ
         def mock_get_columns(table):
-            if table == 'CUSTOMERS':
+            if table == 'CUSTOMERZ':
                 return [
                     {'name': 'CUST_ID', 'type': 'INTEGER', 'length': None, 'precision': 10, 'scale': 0},
                     {'name': 'FIRST_NAME', 'type': 'VARCHAR', 'length': 50, 'precision': None, 'scale': None},
