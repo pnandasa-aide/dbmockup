@@ -86,6 +86,20 @@ The `field_mapping` section supports several types of values:
 | `random_int(min=X, max=Y)` | Random integer between X and Y inclusive. |
 | `random_number(digits=N)` | Random number with exactly N digits. |
 | `date_this_month`, `date_time_this_year` | Formatted date/time strings compatible with DB2. |
+| `thai_name`, `thai_first_name`, `thai_last_name` | Localized Thai names using Faker. |
+| `random_bytes(length=N)` | Random binary data (bytes) of length N. |
+
+### Handling Thai Data and Encoding (CCSID)
+To correctly store Thai data on AS400 DB2, you may need to specify the CCSID (Coded Character Set Identifier) in your connection URL within `config.json`.
+
+Example:
+```json
+"connection_url": "jdbc:as400://HOSTNAME;naming=sql;errors=full;ccsid=838"
+```
+Common Thai CCSIDs:
+- `838`: Thai EBCDIC
+- `874`: Thai ASCII/Windows
+- `1208`: UTF-8 (Recommended for modern systems)
 
 ### Field Name Guessing
 If a pattern is not recognized but the field name contains keywords like "name", "email", "postal", "date", or "id", the tool will attempt to generate appropriate mockup data automatically.

@@ -5,7 +5,9 @@
             "columns": [
                 {"name": "CUST_ID", "type": "INTEGER", "primary_key": true},
                 {"name": "FIRST_NAME", "type": "VARCHAR(50)"},
+                {"name": "FIRST_NAME_TH", "type": "VARCHAR(50)"},
                 {"name": "LAST_NAME", "type": "VARCHAR(50)"},
+                {"name": "LAST_NAME_TH", "type": "VARCHAR(50)"},
                 {"name": "EMAIL", "type": "VARCHAR(100)"},
                 {"name": "POSTAL_CODE", "type": "VARCHAR(10)"},
                 {"name": "CREATED_AT", "type": "TIMESTAMP"}

@@ -17,7 +17,9 @@ def test_main_flow():
                 return [
                     {'name': 'CUST_ID', 'type': 'INTEGER', 'length': None, 'precision': 10, 'scale': 0},
                     {'name': 'FIRST_NAME', 'type': 'VARCHAR', 'length': 50, 'precision': None, 'scale': None},
+                    {'name': 'FIRST_NAME_TH', 'type': 'VARCHAR', 'length': 50, 'precision': None, 'scale': None},
                     {'name': 'LAST_NAME', 'type': 'VARCHAR', 'length': 50, 'precision': None, 'scale': None},
+                    {'name': 'LAST_NAME_TH', 'type': 'VARCHAR', 'length': 50, 'precision': None, 'scale': None},
                     {'name': 'EMAIL', 'type': 'VARCHAR', 'length': 100, 'precision': None, 'scale': None},
                     {'name': 'POSTAL_CODE', 'type': 'VARCHAR', 'length': 10, 'precision': None, 'scale': None},
                     {'name': 'CREATED_AT', 'type': 'TIMESTAMP', 'length': None, 'precision': None, 'scale': None}

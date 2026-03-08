@@ -7,7 +7,9 @@
             "field_mapping": {
                 "CUST_ID": "increment",
                 "FIRST_NAME": "first_name",
+                "FIRST_NAME_TH": "thai_first_name",
                 "LAST_NAME": "last_name",
+                "LAST_NAME_TH": "thai_last_name",
                 "EMAIL": "email",
                 "POSTAL_CODE": "postcode",
                 "CREATED_AT": "date_time_this_year"

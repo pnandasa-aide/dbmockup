@@ -2,10 +2,12 @@ from faker import Faker
 import random
 import re
 import datetime
+import os
 
 class MockDataGenerator:
     def __init__(self):
         self.faker = Faker()
+        self.faker_th = Faker('th_TH')
         self.increments = {}
 
     def generate_value(self, pattern, field_name=None):
@@ -14,6 +16,19 @@ class MockDataGenerator:
             self.increments[field_name] = val
             return val
         
+        # Thai specific methods
+        if pattern == "thai_name":
+            return self.faker_th.name()
+        if pattern == "thai_first_name":
+            return self.faker_th.first_name()
+        if pattern == "thai_last_name":
+            return self.faker_th.last_name()
+
+        # Binary data
+        match_bytes = re.match(r"random_bytes\(length=(\d+)\)", pattern)
+        if match_bytes:
+            return os.urandom(int(match_bytes.group(1)))
+
         # Check if it's a direct faker method call
         if hasattr(self.faker, pattern):
             val = getattr(self.faker, pattern)()
