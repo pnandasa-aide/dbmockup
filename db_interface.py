@@ -109,11 +109,11 @@ class AS400DB2Interface(DatabaseInterface):
             schema = self.config['database'].get('schema', '')
         table_name = table_name.upper()
         
-        # Get journal name and library
-        query = "SELECT JOURNAL_LIBRARY, JOURNAL_NAME FROM QSYS2.SYSTABLESTAT WHERE TABLE_NAME = ?"
+        # Get journal name and library using JOURNALED_OBJECTS (more reliable across OS versions)
+        query = "SELECT JOURNAL_LIBRARY, JOURNAL_NAME FROM QSYS2.JOURNALED_OBJECTS WHERE OBJECT_NAME = ? AND OBJECT_TYPE = '*FILE'"
         params = [table_name]
         if schema:
-            query += " AND TABLE_SCHEMA = ?"
+            query += " AND OBJECT_LIBRARY = ?"
             params.append(schema.upper())
         
         cursor.execute(query, params)
