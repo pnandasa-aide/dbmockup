@@ -65,7 +65,7 @@ Run tests inside Docker:
 ```bash
 docker-compose run as400-mockup python -m unittest test_modules.py
 ```
-
+  
 ## Usage Guide
 
 ### Transaction Ratios
@@ -87,6 +87,11 @@ The `field_mapping` section supports several types of values:
 | `random_number(digits=N)` | Random number with exactly N digits. |
 | `date_this_month`, `date_time_this_year` | Formatted date/time strings compatible with DB2. |
 
+## Interactive Features
+- Missing Tables: If a table in your schema file doesn't exist, the tool will ask if you want to create it.
+- Journaling: If a table isn't journaled, the tool will look for library defaults or ask you where to start journaling.
+- Mismatch: If the database structure differs from your schema file, the tool shows the differences and asks whether to Skip, Recreate, or Continue.
+  
 ### Field Name Guessing
 If a pattern is not recognized but the field name contains keywords like "name", "email", "postal", "date", or "id", the tool will attempt to generate appropriate mockup data automatically.
 

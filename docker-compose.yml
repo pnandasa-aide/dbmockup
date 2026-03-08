@@ -5,7 +5,7 @@ services:
       - ./config.json:/app/config.json
       - ./schema_sample.json:/app/schema_sample.json
       - ./mockup_profile_sample.json:/app/mockup_profile_sample.json
-      # Mount the folder containing the jt400.jar to the container
-      # Adjust the host path to where your jt400.jar is located
       - ./lib:/app/lib
+    stdin_open: true
+    tty: true
     command: python main.py
