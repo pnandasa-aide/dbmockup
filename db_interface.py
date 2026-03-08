@@ -126,7 +126,7 @@ class AS400DB2Interface(DatabaseInterface):
         j_lib, j_name = row[0].strip(), row[1].strip()
         
         # Get current receiver name
-        query_rcv = "SELECT JOURNAL_RECEIVER_LIBRARY, JOURNAL_RECEIVER_NAME FROM QSYS2.JOURNAL_INFO WHERE JOURNAL_LIBRARY = ? AND JOURNAL_NAME = ?"
+        query_rcv = "SELECT ATTACHED_JOURNAL_RECEIVER_LIBRARY, ATTACHED_JOURNAL_RECEIVER_NAME FROM QSYS2.JOURNAL_INFO WHERE JOURNAL_LIBRARY = ? AND JOURNAL_NAME = ?"
         cursor.execute(query_rcv, [j_lib, j_name])
         rcv_row = cursor.fetchone()
         rcv_name = rcv_row[1].strip() if rcv_row else "UNKNOWN"
