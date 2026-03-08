@@ -12,7 +12,7 @@ def test_main_flow():
         mock_db.schema_exists.return_value = True
         
         # Mock get_table_columns for CUSTOMERZ
-        def mock_get_columns(table):
+        def mock_get_columns(table, schema=None):
             if table == 'CUSTOMERZ':
                 return [
                     {'name': 'CUST_ID', 'type': 'INTEGER', 'length': None, 'precision': 10, 'scale': 0},

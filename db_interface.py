@@ -12,7 +12,7 @@ class DatabaseInterface(abc.ABC):
         pass
 
     @abc.abstractmethod
-    def get_table_columns(self, table_name):
+    def get_table_columns(self, table_name, schema=None):
         pass
 
     @abc.abstractmethod
@@ -20,11 +20,11 @@ class DatabaseInterface(abc.ABC):
         pass
 
     @abc.abstractmethod
-    def get_journal_info(self, table_name):
+    def get_journal_info(self, table_name, schema=None):
         pass
 
     @abc.abstractmethod
-    def get_journal_entries_info(self, table_name):
+    def get_journal_entries_info(self, table_name, schema=None):
         pass
 
     @abc.abstractmethod
@@ -72,9 +72,10 @@ class AS400DB2Interface(DatabaseInterface):
         cursor.close()
         return row is not None
 
-    def get_table_columns(self, table_name):
+    def get_table_columns(self, table_name, schema=None):
         cursor = self.conn.cursor()
-        schema = self.config['database'].get('schema', '')
+        if schema is None:
+            schema = self.config['database'].get('schema', '')
         # sanitize input by ensuring it's uppercase and only contains valid SQL identifiers
         table_name = table_name.upper()
         
@@ -102,9 +103,10 @@ class AS400DB2Interface(DatabaseInterface):
             } for row in columns
         ]
 
-    def get_journal_info(self, table_name):
+    def get_journal_info(self, table_name, schema=None):
         cursor = self.conn.cursor()
-        schema = self.config['database'].get('schema', '')
+        if schema is None:
+            schema = self.config['database'].get('schema', '')
         table_name = table_name.upper()
         
         # Get journal name and library
@@ -136,12 +138,13 @@ class AS400DB2Interface(DatabaseInterface):
             "receiver_name": rcv_name
         }
 
-    def get_journal_entries_info(self, table_name):
+    def get_journal_entries_info(self, table_name, schema=None):
         cursor = self.conn.cursor()
-        schema = self.config['database'].get('schema', '')
+        if schema is None:
+            schema = self.config['database'].get('schema', '')
         table_name = table_name.upper()
         
-        j_info = self.get_journal_info(table_name)
+        j_info = self.get_journal_info(table_name, schema=schema)
         if not j_info:
             return None
         
