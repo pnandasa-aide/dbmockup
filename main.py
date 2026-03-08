@@ -112,13 +112,13 @@ def process_table(db, gen, table_schema, profile, batch_size, schema=None):
             record = gen.generate_record(profile['field_mapping'])
             batch_data.append([record[c] for c in cols])
 
-        s, f = db.execute_bulk_insert(table_name, cols, batch_data)
+        s, f = db.execute_bulk_insert(table_name, cols, batch_data, schema=schema)
         results["success"] += s
         results["failed"] += f
 
     # Updates
     if u_count > 0 and pk_col:
-        pks = db.get_random_pks(table_name, pk_col, u_count)
+        pks = db.get_random_pks(table_name, pk_col, u_count, schema=schema)
         if pks:
             cols = list(profile['field_mapping'].keys())
             if pk_col not in cols:
@@ -132,7 +132,7 @@ def process_table(db, gen, table_schema, profile, batch_size, schema=None):
                     record[pk_col] = pk
                     batch_data.append([record[c] for c in cols])
 
-                s, f = db.execute_bulk_update(table_name, cols, batch_data, pk_col)
+                s, f = db.execute_bulk_update(table_name, cols, batch_data, pk_col, schema=schema)
                 results["success"] += s
                 results["failed"] += f
         else:
@@ -140,11 +140,11 @@ def process_table(db, gen, table_schema, profile, batch_size, schema=None):
 
     # Deletes
     if d_count > 0 and pk_col:
-        pks = db.get_random_pks(table_name, pk_col, d_count)
+        pks = db.get_random_pks(table_name, pk_col, d_count, schema=schema)
         if pks:
             for i in range(0, len(pks), batch_size):
                 current_batch_pks = pks[i : i + batch_size]
-                s, f = db.execute_bulk_delete(table_name, current_batch_pks, pk_col)
+                s, f = db.execute_bulk_delete(table_name, current_batch_pks, pk_col, schema=schema)
                 results["success"] += s
                 results["failed"] += f
         else:

@@ -28,19 +28,19 @@ class DatabaseInterface(abc.ABC):
         pass
 
     @abc.abstractmethod
-    def execute_bulk_insert(self, table_name, columns, data):
+    def execute_bulk_insert(self, table_name, columns, data, schema=None):
         pass
 
     @abc.abstractmethod
-    def execute_bulk_update(self, table_name, columns, data, pk_column):
+    def execute_bulk_update(self, table_name, columns, data, pk_column, schema=None):
         pass
 
     @abc.abstractmethod
-    def execute_bulk_delete(self, table_name, data, pk_column):
+    def execute_bulk_delete(self, table_name, data, pk_column, schema=None):
         pass
 
     @abc.abstractmethod
-    def get_random_pks(self, table_name, pk_column, count):
+    def get_random_pks(self, table_name, pk_column, count, schema=None):
         pass
 
 class AS400DB2Interface(DatabaseInterface):
@@ -156,9 +156,8 @@ class AS400DB2Interface(DatabaseInterface):
             WHERE OBJECT = ?
         """
         params = [table_name]
-        if schema:
-            query += " AND OBJECT_LIBRARY = ?"
-            params.append(schema.upper())
+        # Some OS versions might not have OBJECT_LIBRARY column in DISPLAY_JOURNAL.
+        # If it fails, we will try without the OBJECT_LIBRARY filter.
 
         try:
             cursor.execute(query, params)
@@ -180,10 +179,16 @@ class AS400DB2Interface(DatabaseInterface):
             "info": "Requires proper authorities to QSYS2.DISPLAY_JOURNAL"
         }
 
-    def execute_bulk_insert(self, table_name, columns, data):
+    def _qualify_table(self, table_name, schema):
+        if schema:
+            return f"{schema.upper()}.{table_name.upper()}"
+        return table_name.upper()
+
+    def execute_bulk_insert(self, table_name, columns, data, schema=None):
         cursor = self.conn.cursor()
+        full_table_name = self._qualify_table(table_name, schema)
         placeholders = ",".join(["?" for _ in columns])
-        sql = f"INSERT INTO {table_name} ({','.join(columns)}) VALUES ({placeholders})"
+        sql = f"INSERT INTO {full_table_name} ({','.join(columns)}) VALUES ({placeholders})"
         try:
             cursor.executemany(sql, data)
             self.conn.commit()
@@ -195,10 +200,11 @@ class AS400DB2Interface(DatabaseInterface):
         finally:
             cursor.close()
 
-    def execute_bulk_update(self, table_name, columns, data, pk_column):
+    def execute_bulk_update(self, table_name, columns, data, pk_column, schema=None):
         cursor = self.conn.cursor()
+        full_table_name = self._qualify_table(table_name, schema)
         set_clause = ",".join([f"{col} = ?" for col in columns if col != pk_column])
-        sql = f"UPDATE {table_name} SET {set_clause} WHERE {pk_column} = ?"
+        sql = f"UPDATE {full_table_name} SET {set_clause} WHERE {pk_column} = ?"
         
         processed_data = []
         pk_idx = columns.index(pk_column)
@@ -218,9 +224,10 @@ class AS400DB2Interface(DatabaseInterface):
         finally:
             cursor.close()
 
-    def execute_bulk_delete(self, table_name, data, pk_column):
+    def execute_bulk_delete(self, table_name, data, pk_column, schema=None):
         cursor = self.conn.cursor()
-        sql = f"DELETE FROM {table_name} WHERE {pk_column} = ?"
+        full_table_name = self._qualify_table(table_name, schema)
+        sql = f"DELETE FROM {full_table_name} WHERE {pk_column} = ?"
         try:
             cursor.executemany(sql, [[d] for d in data])
             self.conn.commit()
@@ -232,9 +239,10 @@ class AS400DB2Interface(DatabaseInterface):
         finally:
             cursor.close()
 
-    def get_random_pks(self, table_name, pk_column, count):
+    def get_random_pks(self, table_name, pk_column, count, schema=None):
         cursor = self.conn.cursor()
-        query = f"SELECT {pk_column} FROM {table_name} FETCH FIRST {count} ROWS ONLY"
+        full_table_name = self._qualify_table(table_name, schema)
+        query = f"SELECT {pk_column} FROM {full_table_name} FETCH FIRST {count} ROWS ONLY"
         cursor.execute(query)
         rows = cursor.fetchall()
         cursor.close()
