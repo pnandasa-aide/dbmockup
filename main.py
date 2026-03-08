@@ -25,7 +25,7 @@ def verify_schema(db, table_schema):
         print(f"Error: Table {table_name} does not exist.")
         sys.exit(1)
     
-    actual_columns = {col['name']: col for col in actual_columns_list}
+    actual_columns = {col['name'].upper(): col for col in actual_columns_list}
     
     differences = []
     for col_name, expected_info in expected_columns.items():
@@ -105,10 +105,13 @@ def process_table(db, gen, table_schema, profile, batch_size):
     if u_count > 0 and pk_col:
         pks = db.get_random_pks(table_name, pk_col, u_count)
         if pks:
+            cols = list(profile['field_mapping'].keys())
+            if pk_col not in cols:
+                cols.append(pk_col)
+
             for i in range(0, len(pks), batch_size):
                 current_batch_pks = pks[i : i + batch_size]
                 batch_data = []
-                cols = list(profile['field_mapping'].keys())
                 for pk in current_batch_pks:
                     record = gen.generate_record(profile['field_mapping'])
                     record[pk_col] = pk

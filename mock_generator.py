@@ -1,6 +1,7 @@
 from faker import Faker
 import random
 import re
+import datetime
 
 class MockDataGenerator:
     def __init__(self):
@@ -15,7 +16,12 @@ class MockDataGenerator:
         
         # Check if it's a direct faker method call
         if hasattr(self.faker, pattern):
-            return getattr(self.faker, pattern)()
+            val = getattr(self.faker, pattern)()
+            if isinstance(val, datetime.datetime):
+                return val.strftime('%Y-%m-%d %H:%M:%S')
+            if isinstance(val, datetime.date):
+                return val.strftime('%Y-%m-%d')
+            return val
         
         # Handle complex patterns like random_element(['A', 'B']) or random_int(min=1, max=100)
         match_element = re.match(r"random_element\(\[(.*)\]\)", pattern)
