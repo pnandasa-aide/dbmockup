@@ -43,6 +43,10 @@ class DatabaseInterface(abc.ABC):
     def get_random_pks(self, table_name, pk_column, count, schema=None):
         pass
 
+    @abc.abstractmethod
+    def get_max_id(self, table_name, pk_column, schema=None):
+        pass
+
 class AS400DB2Interface(DatabaseInterface):
     def __init__(self, config):
         self.config = config
@@ -247,3 +251,12 @@ class AS400DB2Interface(DatabaseInterface):
         rows = cursor.fetchall()
         cursor.close()
         return [row[0] for row in rows]
+
+    def get_max_id(self, table_name, pk_column, schema=None):
+        cursor = self.conn.cursor()
+        full_table_name = self._qualify_table(table_name, schema)
+        query = f"SELECT MAX({pk_column}) FROM {full_table_name}"
+        cursor.execute(query)
+        row = cursor.fetchone()
+        cursor.close()
+        return row[0] if row and row[0] is not None else 0

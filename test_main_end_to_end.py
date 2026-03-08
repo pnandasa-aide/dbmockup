@@ -10,6 +10,7 @@ def test_main_flow():
         # Mock connection
         mock_db.connect.return_value = None
         mock_db.schema_exists.return_value = True
+        mock_db.get_max_id.return_value = 100
         
         # Mock get_table_columns for CUSTOMERZ
         def mock_get_columns(table, schema=None):

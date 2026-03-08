@@ -32,10 +32,7 @@ class MockDataGenerator:
         # Check if it's a direct faker method call
         if hasattr(self.faker, pattern):
             val = getattr(self.faker, pattern)()
-            if isinstance(val, datetime.datetime):
-                return val.strftime('%Y-%m-%d %H:%M:%S')
-            if isinstance(val, datetime.date):
-                return val.strftime('%Y-%m-%d')
+            # Return raw date/datetime objects for better JDBC driver compatibility
             return val
         
         # Handle complex patterns like random_element(['A', 'B']) or random_int(min=1, max=100)
@@ -62,7 +59,7 @@ class MockDataGenerator:
             if "postal" in fn_lower or "zip" in fn_lower:
                 return self.faker.postcode()
             if "date" in fn_lower or "time" in fn_lower:
-                return self.faker.date_time_this_decade().strftime('%Y-%m-%d %H:%M:%S')
+                return self.faker.date_time_this_decade()
             if "id" in fn_lower:
                 return random.randint(1, 1000)
         
@@ -76,3 +73,6 @@ class MockDataGenerator:
 
     def reset_increments(self):
         self.increments = {}
+
+    def set_increment(self, field_name, value):
+        self.increments[field_name] = value
