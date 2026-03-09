@@ -1,6 +1,8 @@
 import abc
 import jaydebeapi
 import logging
+import datetime
+import jpype
 
 class DatabaseInterface(abc.ABC):
     @abc.abstractmethod
@@ -188,13 +190,35 @@ class AS400DB2Interface(DatabaseInterface):
             return f"{schema.upper()}.{table_name.upper()}"
         return table_name.upper()
 
+    def _prepare_data(self, data):
+        """Convert Python date/datetime to java.sql types for JPype/JayDeBeApi compatibility."""
+        java_data = []
+        for row in data:
+            new_row = []
+            for val in row:
+                if isinstance(val, datetime.datetime):
+                    # Convert to java.sql.Timestamp
+                    Timestamp = jpype.JClass("java.sql.Timestamp")
+                    new_row.append(Timestamp(int(val.timestamp() * 1000)))
+                elif isinstance(val, datetime.date):
+                    # Convert to java.sql.Date
+                    Date = jpype.JClass("java.sql.Date")
+                    # java.sql.Date uses milliseconds since epoch, but representing local date
+                    # Simplest is to use the string constructor or Calendar
+                    new_row.append(Date.valueOf(val.strftime('%Y-%m-%d')))
+                else:
+                    new_row.append(val)
+            java_data.append(new_row)
+        return java_data
+
     def execute_bulk_insert(self, table_name, columns, data, schema=None):
         cursor = self.conn.cursor()
         full_table_name = self._qualify_table(table_name, schema)
         placeholders = ",".join(["?" for _ in columns])
         sql = f"INSERT INTO {full_table_name} ({','.join(columns)}) VALUES ({placeholders})"
         try:
-            cursor.executemany(sql, data)
+            java_data = self._prepare_data(data)
+            cursor.executemany(sql, java_data)
             self.conn.commit()
             return len(data), 0
         except Exception as e:
@@ -218,7 +242,8 @@ class AS400DB2Interface(DatabaseInterface):
             processed_data.append(new_row)
 
         try:
-            cursor.executemany(sql, processed_data)
+            java_data = self._prepare_data(processed_data)
+            cursor.executemany(sql, java_data)
             self.conn.commit()
             return len(data), 0
         except Exception as e:
